@@ -38,7 +38,9 @@ Kato Gestão é um sistema web de gerenciamento de um restaurante desenvolvido p
 ![dg](https://github.com/user-attachments/assets/d647da3b-5732-481f-b456-02622fa41bec)
 ![er](https://github.com/user-attachments/assets/7a58b1d9-a18d-4cf1-9571-c79a21750737)
 
-
+## Tecnologias utilizada
+  #PHP: Back-End.
+  #Angular: Front-End.
 
 ## Instalação
 
