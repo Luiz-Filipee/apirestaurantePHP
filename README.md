@@ -1,6 +1,6 @@
 # Kato Gestão
 
-Kato Gestão é um sistema web de gerenciamento de um restaurante desenvolvido para realizar a gestão de pedidos, e mesas de um restaurente.
+Kato Gestão é um sistema web de gerenciamento de um restaurante desenvolvido para realizar a gestão de pedidos, e mesas de um restaurente. Será um aplicativo web utilizado em um table pelos garçons do estabelecimento. Cada mesa poderá ser atribuida a um cliente já cadastrado e a partir disso, um pedido pode ser feito a cozina.
 
 ## Funcionalidades
 
