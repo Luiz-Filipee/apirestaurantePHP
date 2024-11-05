@@ -1,0 +1,20 @@
+{
+    "name": "laboratorio/src",
+    "description": "projeto final php",
+    "type": "project",
+    "require": {
+        "phpunit/phpunit": "11.3",
+        "msql": "mysql"
+    },
+    "license": "MTA",
+    "autoload": {
+        "psr-4": {
+            "Laboratorio\\Src\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Luiz Filipe"
+        }
+    ]
+}
