@@ -19,11 +19,12 @@
   {
     "message": "Mesa criada com sucesso"
   }
-- **Resposta de Erro (404 NOT FOUND):**
+**- **Resposta de Erro (404 NOT FOUND):**
 ```json
   {
     "message": "Erro ao criar mesa"
   }
+  ```
 
 #### **PUT /mesas**
 - **Descrição:** Atualiza uma mesa ja existente.
@@ -37,6 +38,7 @@
   {
     "message": "Erro ao atualizar mesa"
   }
+  ```
 
 #### **DELETE /mesas**
 - **Descrição:** Remove uma mesa ja existente.
@@ -50,6 +52,7 @@
   {
     "message": "Erro ao remover mesa"
   }
+  ```
 
 ### 2. `/pedidos`
 
@@ -65,6 +68,7 @@
   {
     "message": "Erro ao listar pedidos"
   }
+  ```
 
 #### **POST /pedidos**
 - **Descrição:** Cria uma nova mesa.
@@ -78,6 +82,7 @@
   {
     "message": "Erro ao criar pedido"
   }
+  ```
 
 #### **PUT /pedidos**
 - **Descrição:** Atualiza uma mesa ja existente.
@@ -91,6 +96,7 @@
   {
     "message": "Erro ao atualizar pedido"
   }
+  ```
 
 #### **DELETE /pedidos**
 - **Descrição:** Remove uma mesa ja existente.
