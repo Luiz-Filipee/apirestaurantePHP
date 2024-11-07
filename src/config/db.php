@@ -1,12 +1,21 @@
 <?php
-$host = '192.168.100.86';
-$db = 'api_db';
-$user = 'root';
-$pass = 'password';
 
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    echo "Erro: " . $e->getMessage();
+class Database
+{
+    private static $connection;
+
+    public static function getConnection()
+    {
+        if (!self::$connection) {
+            $host = '192.168.100.86';
+            $db = 'api_db';
+            $user = 'root';
+            $pass = 'password';
+
+            $dsn = "mysql:host=$host;dbname=$db;charset=utf8";
+            self::$connection = new PDO($dsn, $user, $pass);
+            self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        }
+        return self::$connection;
+    }
 }
