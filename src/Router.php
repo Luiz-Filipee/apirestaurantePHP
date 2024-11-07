@@ -22,10 +22,15 @@ class Router {
     public function dispatch($requestedPath) {
         $method = $_SERVER['REQUEST_METHOD'];
 
-        if (isset($this->routes[$method][$requestedPath])) {
-            return call_user_func($this->routes[$method][$requestedPath]);
+        foreach ($this->routes[$method] as $path => $callback) {
+            $pattern = '#^' . preg_replace('/\{([^\/]+)\}/', '(?P<$1>[^/]+)', $path) . '$#';
+            
+            if (preg_match($pattern, $requestedPath, $matches)) {
+                return call_user_func_array($callback, array_values($matches));
+            }
         }
 
+        // Se não encontrar a rota
         echo "404 - Página não encontrada";
     }
 }
