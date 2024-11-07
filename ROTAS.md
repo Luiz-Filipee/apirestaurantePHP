@@ -14,6 +14,13 @@
   
 #### **POST /mesas**
 - **Descrição:** Cria uma nova mesa.
+- **Request Body:**
+ ```json
+    {
+        "numero": 5,
+        "cliente_id": 1
+    }
+  ```
 - **Resposta de Sucesso (200 OK):**
   ```json
   {
@@ -26,8 +33,15 @@
   }
   ```
 
-#### **PUT /mesas**
+#### **PUT /mesas/{id}**
 - **Descrição:** Atualiza uma mesa ja existente.
+- **Request Body:**
+ ```json
+    {
+        "numero": 10,
+        "cliente_id": 2
+    }
+  ```
 - **Resposta de Sucesso (201 CREATED):**
   ```json
   {
@@ -40,7 +54,7 @@
   }
   ```
 
-#### **DELETE /mesas**
+#### **DELETE /mesas/{id}**
 - **Descrição:** Remove uma mesa ja existente.
 - **Resposta de Sucesso (200 OK):**
   ```json
@@ -72,6 +86,21 @@
 
 #### **POST /pedidos**
 - **Descrição:** Cria uma nova mesa.
+- **Request Body:**
+ ```json
+  {
+    "cliente_id": 1,
+    "mesa_id": 1,
+    "itens": [
+        {
+        "produto_id": 2,
+        "quantidade": 1
+        }
+    ],
+    "preco_total": 50.00,
+    "status":"em andamento"
+  }
+  ```
 - **Resposta de Sucesso (201 CREATED):**
   ```json
   {
@@ -84,8 +113,15 @@
   }
   ```
 
-#### **PUT /pedidos**
+#### **PUT /pedidos/{id}**
 - **Descrição:** Atualiza uma mesa ja existente.
+ **Request Body:**
+ ```json
+  {
+    "status": "finalizado",
+    "preco_total": 60.00
+  }
+  ```
 - **Resposta de Sucesso (200 OK):**
   ```json
   {
@@ -98,7 +134,7 @@
   }
   ```
 
-#### **DELETE /pedidos**
+#### **DELETE /pedidos/{id}**
 - **Descrição:** Remove uma mesa ja existente.
 - **Resposta de Sucesso (200 OK):**
   ```json
