@@ -1,42 +1,45 @@
 <?php
+
+require_once "../repositories/PedidoRepository.php";
+require_once "../repositories/MesaRepository.php";
+require_once '../models/Pedido.php';
+
+
 class PedidoController {
     private $pedidoRepository;
     private $mesaRepository;
-    private $funcionarioRepository;
 
-    public function __construct(
-        PedidoRepository $pedidoRepository, 
-        MesaRepository $mesaRepository,
-        FuncionarioRepository $funcionarioRepository){
-        $this->pedidoRepository = $pedidoRepository;
-        $this->mesaRepository = $mesaRepository;
-        $this->funcionarioRepository = $funcionarioRepository;
-
+    public function __construct(){
+        $this->pedidoRepository = new PedidoRepository();
+        $this->mesaRepository = new MesaRepository();
     }
 
     public function criaPedido($data){
-        $mesaId = $data['mesa_id'];
-        $funcionarioId = $data['funcionario_id'];
+        // var_dump($data);
+
+        // $mesaId = $data['id_mesa'] ?? null;
+        // if (!$mesaId) {
+        //     http_response_code(400);
+        //     echo json_encode(['error' => 'ID da mesa é obrigatório']);
+        //     return;
+        // }
+        
+        // var_dump($mesaId); 
+
+        // $mesa = $this->mesaRepository->buscaPorId($mesaId);
+        // var_dump($mesa); 
+        
+        // if (!$mesa) {
+        //     http_response_code(400);
+        //     echo json_encode(['error' => 'Mesa não encontrada']);
+        //     return;
+        // }
         $status = $data['status'] ?? 'pendente';
         $precoTotal = $data['preco_total'] ?? 0;
-            
-        $mesa = $this->mesaRepository->buscaPorId($mesaId);
-        if (!$mesa) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Mesa não encontrada']);
-            return;
-        }
-
-        $funcionario = $this->funcionarioRepository->buscaPorId($funcionarioId);
-        if (!$funcionario) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Funcionário não encontrado']);
-            return;
-        }
+    
 
         $pedido = new Pedido();
-        $pedido->setMesa($mesa);
-        $pedido->setFuncionario($funcionario);
+        $pedido->setMesa(null);
         $pedido->setStatus($status);
         $pedido->setPrecoTotal($precoTotal);
 
@@ -46,9 +49,26 @@ class PedidoController {
             echo json_encode($pedidoSalvo->toArray());
         } catch (Exception $e) {
             http_response_code(500);
-            echo json_encode(['error' => 'Erro ao salvar o pedido']);
+            echo json_encode(['error' => 'Erro ao salvar o pedido', 'message' => $e->getMessage()]);
         }
     }
+
+    public function marcarComoPronto($id) {
+        error_log("Valor de ID recebido: " . var_export($id, true));
+        if (!is_numeric($id) || $id <= 0) {
+            throw new Exception("ID de pedido inválido.");
+        }
+        $pedido = $this->pedidoRepository->buscarPorId($id);
+        if (!$pedido) {
+            throw new Exception("Pedido não encontrado.");
+        }
+        $this->pedidoRepository->atualizarStatus($id, 'Pronto');
+        echo json_encode(['message' => 'Pedido atualizado com sucesso', 'pedido' => ['id' => $id, 'status' => 'Pronto']]);
+    }
+    
+    
+
+    
 
     public function atualizarPedido($id, $data){
         $pedido = $this->pedidoRepository->buscarPorId($id);
@@ -62,9 +82,6 @@ class PedidoController {
             if(isset($data['precoTotal'])){
                 $pedido->setPrecoTotal($data['precoTotal']);
             }
-            if(isset($data['funcionario'])){
-                $pedido->setFuncionario($data['funcionario']);
-            }
             $this->pedidoRepository->atualizar($pedido);
             echo "Pedido atualizado com sucesso!";
         } else {
@@ -74,16 +91,25 @@ class PedidoController {
 
     public function deletarPedido($id)
     {
-        $this->pedidoRepository->deletar($id);
-        echo "Pedido deletado com sucesso!";
+        try {
+            if ($this->pedidoRepository->deletar($id)) {
+                http_response_code(204);
+                echo json_encode(['message' => 'Pedido removido com sucesso']);
+            } else {
+                http_response_code(404);
+                echo json_encode(['error' => 'Pedido não encontrado']);
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro ao deletar pedido', 'message' => $e->getMessage()]);
+        }
     }
 
     public function listarPedidos()
     {
         $pedidos = $this->pedidoRepository->listar();
-        foreach ($pedidos as $pedido) {
-            echo "Pedido ID: " . $pedido->getId() . " - Status: " . $pedido->getStatus() . " - Preço Total: " . $pedido->getPrecoTotal() . "<br>";
-        }
+        header('Content-Type: application/json');
+        echo json_encode($pedidos);
     }
 
     public function visualizarPedido($id)
@@ -96,4 +122,3 @@ class PedidoController {
         }
     }
 }
-?>

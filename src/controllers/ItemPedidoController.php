@@ -1,7 +1,7 @@
 <?php
 
-require_once 'ItemPedido.php';
-require_once 'ItemPedidoRepository.php';
+require_once '../models/ItemPedido.php';
+require_once '../repositories/ItemPedidoRepository.php';
 
 class ItemPedidoController
 {
@@ -12,10 +12,28 @@ class ItemPedidoController
         $this->itemPedidoRepository = new ItemPedidoRepository();
     }
 
-    public function criar($descricao, $quantidade, $pedidoId)
+    public function listar(){
+        $itensPedido = $this->itemPedidoRepository->listar();
+        header('Content-Type: application/json');
+        echo json_encode($itensPedido);
+    }
+
+    public function criar($data)
     {
-        $itemPedido = new ItemPedido($descricao, $quantidade, $pedidoId);
-        return $this->itemPedidoRepository->salvar($itemPedido);
+        $descricao = $data['descricao'];
+        $quantidade = $data['quantidade'];
+        $pedidoId = $data['pedidoId'];
+       
+        $itemPedido = new ItemPedido(null, $descricao, $quantidade, $pedidoId);
+
+        try {
+            $itemPedidoSalvo = $this->itemPedidoRepository->salvar($itemPedido);
+            http_response_code(201);
+            echo json_encode($itemPedidoSalvo->toArray());
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro ao salvar a item pedido']);
+        }
     }
 
     public function buscarItensPorPedido($pedidoId)

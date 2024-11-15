@@ -1,7 +1,7 @@
 <?php
 
-require_once 'ItemPedido.php';
-require_once 'Database.php';
+require_once '../models/ItemPedido.php';
+require_once '../config/db.php';
 
 class ItemPedidoRepository
 {
@@ -12,14 +12,17 @@ class ItemPedidoRepository
         $this->pdo = Database::getConnection();
     }
 
-    public function salvar(ItemPedido $itemPedido)
-    {
-        $stmt = $this->pdo->prepare('INSERT INTO item_pedido (descricao, quantidade, id_pedido) VALUES (?, ?, ?)');
-        $stmt->execute([
-            $itemPedido->getDescricao(),
-            $itemPedido->getQuantidade(),
-            $itemPedido->getPedidoId()
-        ]);
+    public function listar(){
+        $stmt = $this->pdo->query('SELECT * FROM item_pedido');
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function salvar(ItemPedido $itemPedido) {
+        $stmt = $this->pdo->prepare('INSERT INTO item_pedido (descricao, quantidade, id_pedido) VALUES (:descricao, :quantidade, :id_pedido)');
+        $stmt->bindValue(':descricao', $itemPedido->getDescricao());
+        $stmt->bindValue(':quantidade', $itemPedido->getQuantidade());
+        $stmt->bindValue(':id_pedido', $itemPedido->getPedidoId());
+        $stmt->execute();
         $itemPedido->setId($this->pdo->lastInsertId());
         return $itemPedido;
     }

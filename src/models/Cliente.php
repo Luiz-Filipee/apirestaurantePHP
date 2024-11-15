@@ -4,13 +4,13 @@ class Cliente
 {
     private $id;
     private $nome;
-    private $email;
+    private $telefone;
 
-    public function __construct($id = null, $nome = null, $email = null)
+    public function __construct($id = null, $nome = null, $telefone = null)
     {
         $this->id = $id;
         $this->nome = $nome;
-        $this->email = $email;
+        $this->telefone = $telefone;
     }
 
     public function getId()
@@ -33,14 +33,14 @@ class Cliente
         $this->nome = $nome;
     }
 
-    public function getEmail()
+    public function getTelefone()
     {
-        return $this->email;
+        return $this->telefone;
     }
 
-    public function setEmail($email)
+    public function setTelefone($telefone)
     {
-        $this->email = $email;
+        $this->telefone = $telefone;
     }
 
     public function toArray()
@@ -48,7 +48,7 @@ class Cliente
         return [
             'id' => $this->id,
             'nome' => $this->nome,
-            'email' => $this->email
+            'telefone' => $this->telefone
         ];
     }
 }

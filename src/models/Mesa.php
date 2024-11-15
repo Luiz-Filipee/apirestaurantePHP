@@ -5,13 +5,15 @@ require_once 'Cliente.php';
 class Mesa
 {
     private $id;
-    private $numero;
+    private $nome;
+    private $status;
     private $cliente;
 
-    public function __construct($id = null, $numero = null, $cliente = null)
+    public function __construct($id = null, $nome = null, $status = null ,$cliente = null)
     {
         $this->id = $id;
-        $this->numero = $numero;
+        $this->nome = $nome;
+        $this->status = $status;
         $this->cliente = $cliente;
     }
 
@@ -25,14 +27,24 @@ class Mesa
         $this->id = $id;
     }
 
-    public function getNumero()
+    public function getNome()
     {
-        return $this->numero;
+        return $this->nome;
     }
 
-    public function setNumero($numero)
+    public function setNome($nome)
     {
-        $this->numero = $numero;
+        $this->nome = $nome;
+    }
+
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    public function setStatus($status)
+    {
+        $this->status = $status;
     }
 
     public function getCliente()
@@ -49,8 +61,9 @@ class Mesa
     {
         return [
             'id' => $this->id,
-            'numero' => $this->numero,
-            'cliente' => $this->cliente ? $this->cliente->toArray() : null
+            'nome' => $this->nome,
+            'status' => $this->status,
+            // 'cliente' => $this->cliente ? $this->cliente->toArray() : null
         ];
     }
 }

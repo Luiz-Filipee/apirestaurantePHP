@@ -1,22 +1,35 @@
 <?php
+require_once '../repositories/MesaRepository.php';
+
+
 class PedidoRepository {
     private $pdo;
+    private $mesaRepository;
 
     public function __construct()
     {
         $this->pdo = Database::getConnection();
+        $this->mesaRepository = new MesaRepository();
     }
 
     public function salvar(Pedido $pedido)
     {
-        $query = "INSERT INTO pedidos (status, preco_total, funcionario_id, mesa_id) VALUES (:status, :preco_total, :funcionario_id, :mesa_id)";
+        $mesa = $pedido->getMesa();
+        if ($mesa && is_object($mesa)) {
+            $mesa_id = $mesa->getId();
+        } else {
+            $mesa = $this->mesaRepository->buscaPorId($pedido->getMesa()); 
+            $mesa_id = $mesa ? $mesa->getId() : null;
+        }
+    
+        $query = "INSERT INTO pedido (status, preco_total, id_mesa) 
+                  VALUES (:status, :preco_total, :id_mesa)";
         $stmt = $this->pdo->prepare($query);
-
-        $stmt->bindParam(':status', $pedido->getStatus());
-        $stmt->bindParam(':preco_total', $pedido->getPrecoTotal());
-        $stmt->bindParam(':funcionario_id', $pedido->getFuncionario() ? $pedido->getFuncionario()->getId() : null);
-        $stmt->bindParam(':mesa_id', $pedido->getMesa() ? $pedido->getMesa()->getId() : null);
-
+    
+        $stmt->bindValue(':status', $pedido->getStatus());
+        $stmt->bindValue(':preco_total', $pedido->getPrecoTotal());
+        $stmt->bindValue(':id_mesa', $mesa_id);
+    
         $stmt->execute();
         $pedido->setId($this->pdo->lastInsertId()); 
         return $pedido;
@@ -24,31 +37,40 @@ class PedidoRepository {
 
     public function buscarPorId($id)
     {
-        $query = "SELECT * FROM pedidos WHERE id = :id";
-        $stmt = $this->pdo->prepare($query);
-        $stmt->bindParam(':id', $id);
-        $stmt->execute();
-
-        $dados = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        if ($dados) {
-            $funcionario = new Funcionario(); 
-            $mesa = new Mesa(); 
-            return new Pedido($dados['id'], $dados['status'], $dados['preco_total'], $funcionario, $mesa);
+        try {
+            $stmt = $this->pdo->prepare('SELECT * FROM pedido WHERE id = ?');
+            $stmt->execute([$id]);
+            $pedido = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($pedido) {
+                return $pedido;
+            } else {
+                return null;
+            }
+        } catch (PDOException $e) {
+            echo 'Erro na consulta: ' . $e->getMessage();
+            return null;
         }
+    }
 
-        return null;
+    public function atualizarStatus($id, $status)
+    {
+        try {
+            $stmt = $this->pdo->prepare('UPDATE pedido SET status = ? WHERE id = ?');
+            $stmt->execute([$status, $id]);
+        } catch (PDOException $e) {
+            throw new Exception("Erro ao atualizar o pedido: " . $e->getMessage());
+        }
     }
 
     public function atualizar(Pedido $pedido)
     {
-        $query = "UPDATE pedidos SET status = :status, preco_total = :preco_total, funcionario_id = :funcionario_id, mesa_id = :mesa_id WHERE id = :id";
+        $query = "UPDATE pedido SET status = :status, preco_total = :preco_total, funcionario_id = :funcionario_id, mesa_id = :mesa_id WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
 
         $stmt->bindParam(':id', $pedido->getId());
         $stmt->bindParam(':status', $pedido->getStatus());
         $stmt->bindParam(':preco_total', $pedido->getPrecoTotal());
-        $stmt->bindParam(':funcionario_id', $pedido->getFuncionario() ? $pedido->getFuncionario()->getId() : null);
         $stmt->bindParam(':mesa_id', $pedido->getMesa() ? $pedido->getMesa()->getId() : null);
 
         $stmt->execute();
@@ -56,24 +78,14 @@ class PedidoRepository {
 
     public function deletar($id)
     {
-        $query = "DELETE FROM pedidos WHERE id = :id";
+        $query = "DELETE FROM pedido WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
-        $stmt->bindParam(':id', $id);
-        $stmt->execute();
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        return $stmt->execute();
     }
 
-    public function listar()
-    {
-        $query = "SELECT * FROM pedidos";
-        $stmt = $this->pdo->query($query);
-        $pedidos = [];
-
-        while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $funcionario = new Funcionario();
-            $mesa = new Mesa(); 
-            $pedidos[] = new Pedido($dados['id'], $dados['status'], $dados['preco_total'], $funcionario, $mesa);
-        }
-
-        return $pedidos;
+    public function listar(){
+        $stmt = $this->pdo->query('SELECT * FROM pedido');
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

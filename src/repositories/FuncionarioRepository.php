@@ -9,7 +9,7 @@ class FuncionarioRepository {
     }
 
     public function criaFuncionario(Funcionario $funcionario) {
-        $query = "INSERT INTO funcionarios (nome, cargo, salario) VALUES (:nome, :cargo, :salario)";
+        $query = "INSERT INTO funcionario (nome, cargo, salario) VALUES (:nome, :cargo, :salario)";
         $stmt = $this->pdo->prepare($query);
         $stmt->bindValue(':nome', $funcionario->getNome());
         $stmt->bindValue(':cargo', $funcionario->getCargo());
@@ -24,7 +24,7 @@ class FuncionarioRepository {
     }
 
     public function buscaPorId($id) {
-        $query = "SELECT * FROM funcionarios WHERE id = :id";
+        $query = "SELECT * FROM funcionario WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
         $stmt->bindValue(':id', $id);
         $stmt->execute();
@@ -34,7 +34,7 @@ class FuncionarioRepository {
     }
 
     public function listar() {
-        $query = "SELECT * FROM funcionarios";
+        $query = "SELECT * FROM funcionario";
         $stmt = $this->pdo->query($query);
         $results = $stmt->fetchAll();
 
@@ -46,7 +46,7 @@ class FuncionarioRepository {
     }
 
     public function atualiza(Funcionario $funcionario) {
-        $query = "UPDATE funcionarios SET nome = :nome, cargo = :cargo, salario = :salario WHERE id = :id";
+        $query = "UPDATE funcionario SET nome = :nome, cargo = :cargo, salario = :salario WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
         $stmt->bindValue(':nome', $funcionario->getNome());
         $stmt->bindValue(':cargo', $funcionario->getCargo());
@@ -57,10 +57,22 @@ class FuncionarioRepository {
     }
 
     public function remove($id) {
-        $query = "DELETE FROM funcionarios WHERE id = :id";
+        $query = "DELETE FROM funcionario WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
         $stmt->bindValue(':id', $id);
 
         return $stmt->execute();
+    }
+
+    public function buscaPorNome($nome){
+        $stmt = $this->pdo->prepare('SELECT * FROM funcionario WHERE nome = ?');
+        $stmt->execute([$nome]);
+        $funcionario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if($funcionario){
+            return $funcionario;
+        }else{
+            return null;
+        }
     }
 }

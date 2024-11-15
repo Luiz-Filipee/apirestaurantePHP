@@ -3,7 +3,7 @@
     "description": "projeto php",
     "type": "project",
     "require": {
-        "phpunit/phpunit": "11.3"
+        "phpunit/phpunit": "^11.4"
     },
     "license": "MTA",
     "autoload": {

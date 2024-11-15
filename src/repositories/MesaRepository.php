@@ -1,6 +1,6 @@
 <?php
 
-require_once 'Database.php';
+require_once '../config/db.php';
 
 class MesaRepository
 {
@@ -11,53 +11,56 @@ class MesaRepository
     }
 
     public function listar(){
-        $stmt = $this->pdo->query('SELECT * FROM mesas');
+        $stmt = $this->pdo->query('SELECT * FROM mesa');
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function save($mesa){
-        $stmt = $this->pdo->prepare('INSERT INTO mesas (cliente_id) VALUES (:cliente_id)');
-        $stmt->bindParam(':cliente_id', $mesa['cliente_id']);
+        $stmt = $this->pdo->prepare(query: 'INSERT INTO mesa (nome, status ,id_cliente) VALUES (:nome, :status ,:id_cliente)');
+        $stmt->bindValue(':nome', $mesa->getNome());
+        $stmt->bindValue(':status', $mesa->getStatus());
+        $clienteId = is_int($mesa->getCliente()) ? $mesa->getCliente() : $mesa->getCliente()->getId();
+        $stmt->bindValue(':id_cliente', $clienteId);
         $stmt->execute();
-        $mesa['id'] = $this->pdo->lastInsertId();
+        $mesa->setId($this->pdo->lastInsertId());
         return $mesa;
     }
 
     public function atualizarMesa(Mesa $mesa){
-        $query = "UPDATE mesas SET numero = :numero, cliente_id = :cliente_id WHERE id = :id";
+        $query = "UPDATE mesa SET nome = :nome, cliente_id = :cliente_id, status = :status WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
 
-        $stmt->bindParam(':id', $mesa->getId());
-        $stmt->bindParam(':numero', $mesa->getNumero());
-        $stmt->bindParam(':cliente_id', $mesa->getCliente());
+        $stmt->bindValue(':id', $mesa->getId());
+        $stmt->bindValue(':nome', $mesa->getNome());
+        $stmt->bindValue(':status', $mesa->getStatus());
+        $stmt->bindValue(':cliente_id', $mesa->getCliente()->getId());
 
         $stmt->execute();
     }
 
     public function buscaPorId($id){
-        $stmt = $this->pdo->prepare('SELECT * FROM mesas WHERE id = ?');
+        $stmt = $this->pdo->prepare('SELECT * FROM mesa WHERE id = ?');
         $stmt->execute([$id]);
-        $mesa = $stmt->fetchColumn(PDO::FETCH_ASSOC);
+        $mesa = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if($mesa){
-            echo "Mesa ID: " . $mesa['id'] . "\n";
-            echo "Nome: " . $mesa['nome'] . "\n";
-            echo "Capacidade: " . $mesa['capacidade'] . "\n";
-            echo "Status: " . $mesa['status'] . "\n";
             return $mesa;
         }else{
             return null;
         }
     }
 
-    public function removePorId($id){
-        $stmt = $this->pdo->prepare('DELETE FROM mesas WHERE id = ?');
-        $stmt->execute([$id]);
+
+    public function remove($id) {
+        $query = "DELETE FROM mesa WHERE id = :id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        return $stmt->execute();
     }
 
     public function findByClienteNome($nome){
         $stmt = $this->pdo->prepare('
-            SELECT mesas.* FROM mesas 
+            SELECT mesas.* FROM mesa
             JOIN clientes ON mesas.cliente_id = clientes.id 
             WHERE clientes.nome = ?
         ');

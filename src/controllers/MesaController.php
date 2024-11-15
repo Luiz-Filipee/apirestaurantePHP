@@ -1,7 +1,10 @@
 <?php
 
-require_once 'ClienteRepository.php';
-require_once 'MesaRepository.php';
+require_once '../repositories/ClienteRepository.php';
+require_once '../repositories/MesaRepository.php';
+require_once '../models/Mesa.php';
+require_once '../models/Cliente.php';
+
 
 class MesaController
 {
@@ -14,6 +17,7 @@ class MesaController
         $this->clienteRepository = new ClienteRepository();
     }
 
+
     public function getAllMesas()
     {
         $mesas = $this->mesaRepository->listar();
@@ -23,7 +27,16 @@ class MesaController
 
     public function criaMesa($data)
     {
+        if (empty($data['cliente_id']) || empty($data['nome']) || empty($data['status'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Os campos cliente_id, nome e status são obrigatórios.']);
+            return;
+        }
+
         $clienteId = $data['cliente_id'];
+        $nome = $data['nome'];
+        $status = $data['status'];
+        
         
         $cliente = $this->clienteRepository->findById($clienteId);
         if (!$cliente) {
@@ -32,50 +45,81 @@ class MesaController
             return;
         }
 
-        $mesa = [
-            'cliente_id' => $clienteId,
-        ];
+        $mesa = new Mesa(null, $nome, $status, $clienteId);
 
         try {
             $mesaSalva = $this->mesaRepository->save($mesa);
-            http_response_code(201);
-            echo json_encode($mesaSalva);
+        
+            if ($mesaSalva instanceof Mesa) {
+                http_response_code(201);
+                echo json_encode($mesaSalva->toArray());
+            } else {
+                throw new Exception("Erro ao salvar a mesa: Retorno inválido.");
+            }
         } catch (Exception $e) {
             http_response_code(500);
-            echo json_encode(['error' => 'Erro ao salvar a mesa']);
+            echo json_encode(['error' => 'Erro ao salvar a mesa', 'message' => $e->getMessage()]);
         }
     }
 
-    public function deletaMesa($id)
-    {
+   
+
+    public function remove($id){
         try {
-            if ($this->mesaRepository->buscaPorId($id)) {
-                $this->mesaRepository->removePorId($id);
+            if ($this->mesaRepository->remove($id)) {
                 http_response_code(204);
+                echo json_encode(['message' => 'Mesa removida com sucesso']);
             } else {
                 http_response_code(404);
                 echo json_encode(['error' => 'Mesa não encontrada']);
             }
         } catch (Exception $e) {
-            http_response_code(409);
-            echo json_encode(['error' => 'Erro de integridade: não é possível deletar a mesa porque ela está associada a outros registros']);
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro ao deletar mesa', 'message' => $e->getMessage()]);
         }
     }
 
-    public function atualizaMesa($id, $data){
-        $mesa = $this->mesaRepository->buscaPorId($id);
-        if ($mesa) {
-            if(isset($data['numero'])){
-                $mesa->setNumero($data['numero']);
-            }
-            if(isset($data['cliente'])){
-                $mesa->setCliente($data['cliente']);
-            }
-            echo "Mesa atualizado com sucesso!";
-        } else {
-            echo "Mesa não encontrado!";
+    public function buscaPorId($id){
+        $mesaEncontrado = $this->mesaRepository->buscaPorId($id);
+        if($mesaEncontrado){
+            return $mesaEncontrado;
+        }else{
+            return null;
         }
     }
+
+    public function atualizaMesa($id, $data)
+    {
+        $mesa = $this->mesaRepository->buscaPorId($id);
+        if ($mesa) {
+            if (isset($data['nome'])) {
+                $mesa->setNome($data['nome']);
+            }
+            if (isset($data['cliente'])) {
+                $mesa->setCliente($data['cliente']);
+            }
+            if (isset($data['status'])) {
+                $mesa->setStatus($data['status']);
+            }
+
+            // Atualiza no banco de dados
+            try {
+                $mesaAtualizada = $this->mesaRepository->save($mesa);
+                http_response_code(200);
+                echo json_encode([
+                    'message' => 'Mesa atualizada com sucesso!',
+                    'mesa' => $mesaAtualizada->toArray()
+                ]);
+            } catch (Exception $e) {
+                http_response_code(500);
+                echo json_encode(['error' => 'Erro ao atualizar a mesa']);
+            }
+        } else {
+            http_response_code(404);
+            echo json_encode(['error' => 'Mesa não encontrada']);
+        }
+    }
+
 
     public function buscaMesaPeloNomeDoResponsavel($nome)
     {

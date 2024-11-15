@@ -7,7 +7,7 @@ class Database
     public static function getConnection()
     {
         if (!self::$connection) {
-            $host = '192.168.100.86';
+            $host = '127.0.0.1'; //localhost
             $db = 'api_db';
             $user = 'root';
             $pass = 'password';

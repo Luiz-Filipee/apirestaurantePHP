@@ -5,10 +5,11 @@ class ItemPedido
     private $id;
     private $descricao;
     private $quantidade;
-    private $pedidoId; // Armazena o ID do Pedido, pois estamos sem ORM
+    private $pedidoId; 
 
-    public function __construct($descricao, $quantidade, $pedidoId)
+    public function __construct($id=null, $descricao = null, $quantidade = null, $pedidoId = null)
     {
+        $this->id = $id;
         $this->descricao = $descricao;
         $this->quantidade = $quantidade;
         $this->pedidoId = $pedidoId;
@@ -56,5 +57,13 @@ class ItemPedido
         $this->pedidoId = $pedidoId;
     }
 
+    public function toArray()
+    {
+        return [
+            'id' => $this->id,
+            'descricao' => $this->descricao,
+            'quantidade' => $this->quantidade
+        ];
+    }
    
 }

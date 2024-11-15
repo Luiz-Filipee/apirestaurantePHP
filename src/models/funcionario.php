@@ -45,4 +45,14 @@ class Funcionario{
     public function setSalario($salario) {
         $this->salario = $salario;
     }
+
+    public function toArray()
+    {
+        return [
+            'id' => $this->id,
+            'nome' => $this->nome,
+            'cargo' => $this->cargo,
+            'salario' => $this->salario,
+        ];
+    }
 }

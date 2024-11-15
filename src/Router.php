@@ -22,6 +22,11 @@ class Router {
     public function dispatch($requestedPath) {
         $method = $_SERVER['REQUEST_METHOD'];
 
+        if (!isset($this->routes[$method])) {
+            echo "404 - Página não encontrada";
+            return;
+        }
+
         foreach ($this->routes[$method] as $path => $callback) {
             $pattern = '#^' . preg_replace('/\{([^\/]+)\}/', '(?P<$1>[^/]+)', $path) . '$#';
             
@@ -30,7 +35,6 @@ class Router {
             }
         }
 
-        // Se não encontrar a rota
         echo "404 - Página não encontrada";
     }
 }
