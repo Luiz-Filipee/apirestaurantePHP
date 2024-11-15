@@ -21,13 +21,28 @@ Kato Gestão é um sistema web de gerenciamento de um restaurante desenvolvido p
   - `src/`
       - **teste**: 
     - `models/`
-      - **teste**: 
+      - **Cliente**: Entidade para representar clientes.
+      - **Funcionario**: Entidade para representar funcionarios.
+      - **ItemPedido**: Entidade para representar itens do pedido.
+      - **Mesa**: Entidade para representar mesas.
+      - **Pedido**: Entidade para respresentar pedido.
     - `controllers/`
-      - **teste**: 
+      - **ClienteController**: Classe de controler dos clientes.
+      - **FuncionarioController**: Classe de controler dos funcionarios.
+      - **ItemPedidoController**: Classe de controler de itens do pedido.
+      - **MesaController**: Classe de controller de mesa.
+      - **PedidoController**: classe de controller de pedido.
+    -`repositories/`
+      - **ClienteRepository**: Classe de repository dos clientes.
+      - **FuncionarioRepository**: Classe de repository dos funcionarios.
+      - **ItemPedidoRepository**: Classe de repository dos itens dos pedidos.
+      - **MesaRepository**: Classe de repository das mesas.
+      - **PedidoRepository**: Classe de repository dos pedidos.
     - `tests/`
-      - **teste**: 
-      - **teste**:
+      - **MesaControllerTest**: Classe de testes de mesas. 
     - `config/`
+    - **api_db.sql**: Arquivos de tabelas do DB.
+    - **db.php**: Arquivo de configuraçao do banco de dados.
   - **php.xml**: Arquivo de configuração de testes do phpunit.
   - **composer.json**: Arquivo de configuração de dependências do composer.
  
