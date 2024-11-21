@@ -63,3 +63,7 @@ Kato Gestão é um sistema web de gerenciamento de um restaurante desenvolvido p
    ```bash
    git clone https://github.com/seu-usuario/restaurantephpapi.git
    cd restaurantephpapi
+
+2. Instale as dependecias do composer na raiz do projeto
+   ```bash
+   composer install
