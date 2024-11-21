@@ -1,5 +1,5 @@
 <?php 
-require_once '../../vendor/autoload.php';
+require_once '../app/vendor/autoload.php';
 
 use PHPUnit\Framework\TestCase;
 
@@ -18,7 +18,7 @@ class MesaControllerTest extends TestCase{
 
     public function testGetAllMesas()
     {
-        ob_start();
+        ob_start(); // Comeca a captura de saida, armazena em buffer (memoria) qualquer saida que seria enviada para o navegador
         $this->mesaController->getAllMesas();
         $output = ob_get_clean();
 
@@ -60,7 +60,7 @@ class MesaControllerTest extends TestCase{
     public function testDeletaMesaExistente()
     {
         ob_start();
-        $this->mesaController->deletaMesa(1); 
+        $this->mesaController->remove(1); 
         $output = ob_get_clean();
 
         $this->assertEmpty($output, "O output de deletaMesa deve ser vazio quando bem-sucedido.");
@@ -69,7 +69,7 @@ class MesaControllerTest extends TestCase{
     public function testDeletaMesaNaoExistente()
     {
         ob_start();
-        $this->mesaController->deletaMesa(999); 
+        $this->mesaController->remove(999); 
         $output = ob_get_clean();
 
         $this->assertStringContainsString('Mesa não encontrada', $output);
@@ -83,7 +83,7 @@ class MesaControllerTest extends TestCase{
         ];
 
         ob_start();
-        $this->mesaController->atualizaMesa(1, $dadosAtualizados); // Supondo que ID 1 exista
+        $this->mesaController->atualizaMesa(1, $dadosAtualizados); 
         $output = ob_get_clean();
 
         $this->assertStringContainsString('Mesa atualizada com sucesso!', $output);
@@ -92,7 +92,7 @@ class MesaControllerTest extends TestCase{
     public function testBuscaMesaPeloNomeDoResponsavel()
     {
         ob_start();
-        $this->mesaController->buscaMesaPeloNomeDoResponsavel('Cliente Teste'); // Supondo que exista
+        $this->mesaController->buscaMesaPeloNomeDoResponsavel('Cliente Teste'); 
         $output = ob_get_clean();
 
         $this->assertNotEmpty($output, "O output de buscaMesaPeloNomeDoResponsavel não deve ser vazio.");
