@@ -32,7 +32,7 @@ Kato Gestão é um sistema web de gerenciamento de um restaurante desenvolvido p
       - **ItemPedidoController**: Classe de controler de itens do pedido.
       - **MesaController**: Classe de controller de mesa.
       - **PedidoController**: classe de controller de pedido.
-    -`repositories/`
+    - `repositories/`
       - **ClienteRepository**: Classe de repository dos clientes.
       - **FuncionarioRepository**: Classe de repository dos funcionarios.
       - **ItemPedidoRepository**: Classe de repository dos itens dos pedidos.
