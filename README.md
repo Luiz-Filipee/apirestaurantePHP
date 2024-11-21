@@ -67,3 +67,7 @@ Kato Gestão é um sistema web de gerenciamento de um restaurante desenvolvido p
 2. Instale as dependecias do composer na raiz do projeto
    ```bash
    composer install
+
+3. Rode o servidor no terminal
+   ```bash
+   php -S localhost:8000
